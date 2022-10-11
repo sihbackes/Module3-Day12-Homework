@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      #currentTargetExample {
+        border: 2px solid gray;
+        padding: 1rem;
+      }
+
+      #currentTargetExample > div {
+        border: 2px solid green;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Default text</h1>
+    <h2>outer h2</h2>
+    <input
+      id="first-input"
+      type="text"
+      placeholder="change title text here"
+      oninput="handleInput(event)"
+    />
+
+    <br />
+
+    <input
+      id="second-input"
+      type="text"
+      placeholder="create new element"
+      onchange="createNewElement(event)"
+      style="margin-top: 1rem"
+    />
+    <ul id="content-area">
+      <!-- generate new elements here dynamically -->
+    </ul>
+
+    <div id="currentTargetExample" onclick="handleDiv(event)">
+      <div style="background-color: blue" onclick="traversingDown(event)">
+        <h2>Secondary title</h2>
+        <button onclick="traversingUp(event)">Random Button</button>
+      </div>
+    </div>
+
+    <script>
+      const traversingDown = function (event) {
+        const innerDiv = event.currentTarget;
+
+        console.log(innerDiv.querySelector("h2")); // this works top to bottom in looking for a DOM node
+      };
+
+      const traversingUp = function (event) {
+        const button = event.target;
+
+        // const parentElement = button.parentNode.parentNode // how to reach a parent element up the DOM tree
+        const parentElement = button.closest("#currentTargetExample"); // we look up the DOM tree for an element that matches this id
+        console.log(button, parentElement);
+      };
+
+      const handleDiv = function (event) {
+        // console.log(event.currentTarget)
+        // event.target.style.backgroundColor = "red" // this will have as event.target also child elements that got clicked
+
+        // currentTarget always gives you the reference of the node that owns the event (aka parent)
+        event.currentTarget.style.backgroundColor = "red";
+      };
+
+      const handleInput = function (event) {
+        const h1 = document.querySelector("h1");
+        // console.log(event)
+        // two ways:
+        // 1) selecting the input node from the dom (document.querySelector)
+        // or
+        // 2) finding the dom node of the input inside the event object
+
+        const input = event.target;
+        h1.innerText = input.value;
+      };
+
+      // create a new element every time we press eneter on the second input
+      const createNewElement = function (event) {
+        console.log(event);
+        const contentArea = document.getElementById("content-area");
+        const input = event.target;
+
+        const newLi = document.createElement("li");
+
+        newLi.innerText = input.value;
+        newLi.onclick = function (event) {
+          const li = event.target;
+          li.style.color = "red";
+        };
+
+        contentArea.appendChild(newLi);
+      };
+    </script>
+  </body>
+</html>

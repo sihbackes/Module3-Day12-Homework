@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Accessing Elements in the DOM</title>
+
+    <style>
+      html {
+        font-family: sans-serif;
+        color: #333;
+      }
+
+      body {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      div div,
+      div article {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #dedede;
+      }
+
+      input[type="text"] {
+        min-height: 36px;
+        min-width: 480px;
+        padding-left: 10px;
+        border: 2px solid rgba(76, 0, 255, 0.35);
+        font-size: 1rem;
+      }
+
+      .selected {
+        color: orange;
+        border-radius: 6px;
+        border-width: 2px;
+        border-color: orange;
+        border-style: solid;
+        padding: 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Accessing Elements in the DOM</h1>
+
+    <input
+      type="text"
+      placeholder="insert your query here"
+      oninput="handleKeyUp(event)"
+    />
+    <button onclick="addNewElement()">Add Element</button>
+    <br />
+    <input type="color" />
+    <button onclick="handleColorInput()">Change Background Color</button>
+
+    <div id="creation-area">
+      <!-- newly generated items will be visible here -->
+    </div>
+
+    <div id="container-node">
+      <h2 id="demo-id" class="previous-class">ID (#demo-id)</h2>
+      <div>Access me by ID</div>
+    </div>
+
+    <div id="second-container">
+      <h2>Class (.demo-class)</h2>
+      <div class="demo-class">Access me by class (1)</div>
+      <div class="demo-class">Access me by class (2)</div>
+    </div>
+
+    <div id="tag-article">
+      <h2>Tag (article)</h2>
+      <div id="article-container">
+        <article>Access me by tag (1)</article>
+        <article>Access me by tag (2)</article>
+      </div>
+    </div>
+
+    <div id="demo-query">
+      <h2>Query Selector</h2>
+      <div>Access me by query</div>
+    </div>
+
+    <div>
+      <h2>Query Selector All</h2>
+      <div class="demo-query-all">Access me by query all (1)</div>
+      <div class="demo-query-all">Access me by query all (2)</div>
+    </div>
+
+    <h2>A more complex query</h2>
+    <div id="more-complex">
+      <ul>
+        <li>First element inside a list</li>
+        <li>Second element inside a list</li>
+        <li>Third element inside a list</li>
+      </ul>
+    </div>
+
+    <script>
+      const handleKeyUp = function (event) {
+        const h1 = document.querySelector("h1");
+        console.log(event);
+
+        const keyPressed = event.key;
+        h1.innerText = event.target.value;
+
+        switch (keyPressed) {
+          case "Shift":
+            h1.style.color = "red";
+            break;
+          case "Enter":
+            h1.style.color = "blue";
+            break;
+          case "Alt":
+            h1.style.color = "purple";
+            break;
+          case "Backspace":
+            h1.style.color = "green";
+            break;
+          default:
+            h1.style.color = "black";
+        }
+      };
+      // window onload makes sure that all the resources are correctly loaded ( DOM INCLUDED! )before the function executes
+      window.onload = function () {
+        const input = document.querySelector("input[type='text']");
+        const h1 = document.querySelector("h1");
+
+        // input.onkeyup = handleKeyUp
+        // input.addEventListener("keyup", handleKeyUp) // event gets passed to your function always
+
+        console.log(h1);
+
+        const handleH1 = function () {
+          h1.innerText = "Empty";
+        };
+
+        // h1.onclick = handleH1() // this fires handlingH1 RIGHT AWAY! DON'T DO IT
+        // h1.onclick = handleH1 // this fires only when the event calls it
+        h1.addEventListener("click", handleH1); // this is equivalent to the previous method
+        // h1.addEventListener("click", handleSomethingElse) // this method accepts multiple functions at the same time for the same event
+
+        const nodeList = document.querySelectorAll(".demo-query-all");
+        console.log(nodeList);
+
+        for (let node of nodeList) {
+          node.style = "color: red;";
+        }
+      };
+
+      const createContainer = function () {
+        const newContainer = document.createElement("div");
+        newContainer.className = "new-container";
+
+        const h2 = document.createElement("h2");
+        h2.innerText = "New Container";
+
+        const innerDiv = document.createElement("div");
+        innerDiv.innerText = "lorem ipsum sit dolor...";
+
+        newContainer.appendChild(h2);
+        newContainer.appendChild(innerDiv);
+
+        const tagContainer = document.getElementById("tag-article");
+
+        document.body.insertBefore(newContainer, tagContainer);
+      };
+
+      const addNewElement = function () {
+        // called from the click of the button
+        const input = document.querySelector("input[type='text']"); // taking the node referece of the input
+        const container = document.getElementById("creation-area"); // getting the container
+
+        if (input.value !== "") {
+          const newItem = document.createElement("div"); // creating a new element
+          newItem.innerText = input.value; // adding a dynamic content that comes from the input.value
+
+          container.appendChild(newItem); // appending the new item with the dynamic text already inside
+        }
+
+        // if (input.value !== "") {
+        //     container.innerHTML += `<div>${input.value}</div>`
+        // }
+      };
+
+      //the event object is representing the exact element the event originated from, meaning: our input
+      const handleInput = function (event) {
+        // console.dir(event.target)
+        console.log(event);
+
+        const input = event.target; // input node will be found here
+        const h1 = document.querySelector("h1");
+        h1.innerText = event.target.value;
+      };
+
+      const handleColorInput = function () {
+        const input = document.querySelector("input[type='color']");
+        console.log(input.value);
+
+        document.body.style.backgroundColor = input.value;
+      };
+
+      const greet = function (name) {};
+
+      greet("Akbar");
+    </script>
+  </body>
+</html>
